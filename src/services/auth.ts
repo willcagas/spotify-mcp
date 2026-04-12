@@ -16,6 +16,13 @@ import type { TokenData } from "../types.js";
 const CONFIG_DIR = join(homedir(), ".spotify-mcp");
 const TOKEN_FILE = join(CONFIG_DIR, "tokens.json");
 
+type RedirectConfig = {
+  redirectUri: string;
+  listenHost: string;
+  listenPort: number;
+  callbackPath: string;
+};
+
 function base64url(buffer: Buffer): string {
   return buffer
     .toString("base64")
@@ -77,9 +84,32 @@ export class TokenManager {
     const codeChallenge = generateCodeChallenge(codeVerifier);
     const state = base64url(randomBytes(16));
 
-    const { port, authCode } = await this.startCallbackServer(state);
+    const configuredRedirect = process.env.SPOTIFY_REDIRECT_URI?.trim();
+    let redirectConfig: RedirectConfig;
+    let authCodePromise: Promise<string>;
 
-    const redirectUri = `http://127.0.0.1:${port}/callback`;
+    if (configuredRedirect) {
+      redirectConfig = this.parseRedirectUri(configuredRedirect);
+      const { authCode } = await this.startCallbackServer(
+        state,
+        redirectConfig.listenHost,
+        redirectConfig.listenPort,
+        redirectConfig.callbackPath,
+      );
+      authCodePromise = authCode;
+    } else {
+      const callbackPath = "/callback";
+      const { port, authCode } = await this.startCallbackServer(state, "127.0.0.1", 0, callbackPath);
+      redirectConfig = {
+        redirectUri: `http://127.0.0.1:${port}${callbackPath}`,
+        listenHost: "127.0.0.1",
+        listenPort: port,
+        callbackPath,
+      };
+      authCodePromise = authCode;
+    }
+
+    const redirectUri = redirectConfig.redirectUri;
 
     const authParams = new URLSearchParams({
       response_type: "code",
@@ -98,12 +128,51 @@ export class TokenManager {
     );
     await open(authUrl);
 
-    const code = await authCode;
+    const code = await authCodePromise;
     await this.exchangeCode(code, codeVerifier, redirectUri);
+  }
+
+  private parseRedirectUri(redirectUri: string): RedirectConfig {
+    let parsed: URL;
+    try {
+      parsed = new URL(redirectUri);
+    } catch {
+      throw new Error(
+        "SPOTIFY_REDIRECT_URI is invalid. Expected format like http://127.0.0.1:8888/callback",
+      );
+    }
+
+    if (parsed.protocol !== "http:") {
+      throw new Error(
+        "SPOTIFY_REDIRECT_URI must use http for loopback addresses.",
+      );
+    }
+
+    if (parsed.hostname !== "127.0.0.1" && parsed.hostname !== "::1") {
+      throw new Error(
+        "SPOTIFY_REDIRECT_URI must use a loopback IP literal (127.0.0.1 or ::1).",
+      );
+    }
+
+    if (!parsed.port) {
+      throw new Error(
+        "SPOTIFY_REDIRECT_URI must include an explicit port, e.g. http://127.0.0.1:8888/callback",
+      );
+    }
+
+    return {
+      redirectUri,
+      listenHost: parsed.hostname,
+      listenPort: Number(parsed.port),
+      callbackPath: parsed.pathname || "/",
+    };
   }
 
   private startCallbackServer(
     expectedState: string,
+    host: string,
+    listenPort: number,
+    callbackPath: string,
   ): Promise<{ port: number; authCode: Promise<string> }> {
     return new Promise((resolveServer) => {
       let resolveCode: (code: string) => void;
@@ -117,7 +186,7 @@ export class TokenManager {
         (req: IncomingMessage, res: ServerResponse) => {
           const url = new URL(req.url ?? "/", `http://127.0.0.1`);
 
-          if (url.pathname !== "/callback") {
+          if (url.pathname !== callbackPath) {
             res.writeHead(404);
             res.end("Not found");
             return;
@@ -161,13 +230,13 @@ export class TokenManager {
         },
       );
 
-      // Bind to port 0 on 127.0.0.1 for dynamic port assignment
-      server.listen(0, "127.0.0.1", () => {
+      // Bind to explicit port when configured, or use 0 for dynamic assignment.
+      server.listen(listenPort, host, () => {
         const addr = server.address();
         const port =
           typeof addr === "object" && addr !== null ? addr.port : 0;
         process.stderr.write(
-          `Auth callback server listening on http://127.0.0.1:${port}/callback\n`,
+          `Auth callback server listening on http://${host}:${port}${callbackPath}\n`,
         );
         resolveServer({ port, authCode });
       });

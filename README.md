@@ -27,7 +27,9 @@ A comprehensive Spotify MCP (Model Context Protocol) server with **54 tools** co
 
 1. Go to https://developer.spotify.com/dashboard
 2. Create a new app
-3. Set the redirect URI to `http://127.0.0.1/callback` (must use `127.0.0.1`, NOT `localhost`)
+3. Add a loopback redirect URI (must use `127.0.0.1`, NOT `localhost`)
+   - Recommended: `http://127.0.0.1:8888/callback`
+   - If your dashboard accepts no-port loopback, `http://127.0.0.1/callback` also works
 4. Copy your **Client ID**
 
 ### 2. Install and Build
@@ -50,7 +52,8 @@ Add to your `claude_desktop_config.json`:
       "command": "node",
       "args": ["/path/to/spotify-mcp/dist/index.js"],
       "env": {
-        "SPOTIFY_CLIENT_ID": "your_client_id_here"
+        "SPOTIFY_CLIENT_ID": "your_client_id_here",
+        "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:8888/callback"
       }
     }
   }
@@ -69,7 +72,7 @@ On first use, the server will open your browser to authorize with Spotify. A tem
 |----------|----------|-------------|
 | `SPOTIFY_CLIENT_ID` | Yes | Your Spotify app's Client ID |
 | `SPOTIFY_CLIENT_SECRET` | No | Optional. Only needed if you prefer the classic auth code flow over PKCE |
-| `SPOTIFY_REDIRECT_URI` | No | Override redirect URI (default: `http://127.0.0.1:{random_port}/callback`) |
+| `SPOTIFY_REDIRECT_URI` | No | Fixed redirect URI for OAuth callback. Must be loopback HTTP with explicit port, e.g. `http://127.0.0.1:8888/callback`. If omitted, server uses `http://127.0.0.1:{random_port}/callback` |
 
 ## Important Limitations
 
