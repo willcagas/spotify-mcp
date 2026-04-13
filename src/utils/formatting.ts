@@ -47,7 +47,7 @@ export function formatAlbum(album: SpotifyAlbumSimplified): string {
 }
 
 export function formatArtist(artist: SpotifyArtist): string {
-  const genres = artist.genres.length > 0 ? ` | Genres: ${artist.genres.join(", ")}` : "";
+  const genres = artist.genres?.length > 0 ? ` | Genres: ${artist.genres.join(", ")}` : "";
   return `**${artist.name}**${genres} \`${artist.uri}\``;
 }
 

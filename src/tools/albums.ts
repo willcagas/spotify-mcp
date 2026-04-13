@@ -27,8 +27,8 @@ export function registerAlbumTools(server: McpServer, spotify: SpotifyClient): v
           `**Type:** ${album.album_type}\n` +
           `**Release:** ${album.release_date}\n` +
           `**Tracks:** ${album.total_tracks}\n` +
-          `**Label:** ${album.label}\n` +
-          (album.genres.length ? `**Genres:** ${album.genres.join(", ")}\n` : "") +
+          (album.label ? `**Label:** ${album.label}\n` : "") +
+          (album.genres?.length ? `**Genres:** ${album.genres.join(", ")}\n` : "") +
           `**URI:** \`${album.uri}\`\n` +
           `**URL:** ${album.external_urls.spotify}`
         );

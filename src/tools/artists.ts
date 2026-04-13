@@ -21,7 +21,7 @@ export function registerArtistTools(server: McpServer, spotify: SpotifyClient): 
 
         return textContent(
           `# ${artist.name}\n\n` +
-          (artist.genres.length ? `**Genres:** ${artist.genres.join(", ")}\n` : "") +
+          (artist.genres?.length ? `**Genres:** ${artist.genres.join(", ")}\n` : "") +
           `**URI:** \`${artist.uri}\`\n` +
           `**URL:** ${artist.external_urls.spotify}`
         );
