@@ -43,43 +43,43 @@ export function registerSearchTools(server: McpServer, spotify: SpotifyClient): 
 
         const sections: string[] = [`# Search results for "${query}"\n`];
 
-        if (result.tracks?.items.length) {
+        if (result.tracks?.items?.length) {
           sections.push("## Tracks");
           sections.push(result.tracks.items.map((t, i) => formatTrack(t, i)).join("\n"));
           sections.push(formatPagination(result.tracks.total, result.tracks.limit, result.tracks.offset));
         }
 
-        if (result.artists?.items.length) {
+        if (result.artists?.items?.length) {
           sections.push("\n## Artists");
           sections.push(result.artists.items.map((a) => formatArtist(a)).join("\n"));
           sections.push(formatPagination(result.artists.total, result.artists.limit, result.artists.offset));
         }
 
-        if (result.albums?.items.length) {
+        if (result.albums?.items?.length) {
           sections.push("\n## Albums");
           sections.push(result.albums.items.map((a) => formatAlbum(a)).join("\n"));
           sections.push(formatPagination(result.albums.total, result.albums.limit, result.albums.offset));
         }
 
-        if (result.playlists?.items.length) {
+        if (result.playlists?.items?.length) {
           sections.push("\n## Playlists");
           sections.push(result.playlists.items.map((p) => formatPlaylist(p)).join("\n"));
           sections.push(formatPagination(result.playlists.total, result.playlists.limit, result.playlists.offset));
         }
 
-        if (result.shows?.items.length) {
+        if (result.shows?.items?.length) {
           sections.push("\n## Shows");
           sections.push(result.shows.items.map((s) => formatShow(s)).join("\n"));
           sections.push(formatPagination(result.shows.total, result.shows.limit, result.shows.offset));
         }
 
-        if (result.episodes?.items.length) {
+        if (result.episodes?.items?.length) {
           sections.push("\n## Episodes");
           sections.push(result.episodes.items.map((e) => formatEpisode(e)).join("\n"));
           sections.push(formatPagination(result.episodes.total, result.episodes.limit, result.episodes.offset));
         }
 
-        if (result.audiobooks?.items.length) {
+        if (result.audiobooks?.items?.length) {
           sections.push("\n## Audiobooks");
           sections.push(result.audiobooks.items.map((a) => formatAudiobook(a)).join("\n"));
           sections.push(formatPagination(result.audiobooks.total, result.audiobooks.limit, result.audiobooks.offset));
