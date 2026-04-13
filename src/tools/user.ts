@@ -55,7 +55,7 @@ export function registerUserTools(server: McpServer, spotify: SpotifyClient): vo
         const lines = ["# Followed Artists\n"];
         lines.push(...artists.items.map((a) => formatArtist(a)));
 
-        if (artists.cursors.after) {
+        if (artists.cursors?.after) {
           lines.push(`\n---\nNext cursor: \`${artists.cursors.after}\``);
         } else {
           lines.push("\n---\nEnd of results");

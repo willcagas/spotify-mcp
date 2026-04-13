@@ -238,7 +238,8 @@ export interface TokenData {
 export interface PlaylistItem {
   added_at: string;
   added_by: { id: string };
-  track: SpotifyTrack | SpotifyEpisode;
+  is_local: boolean;
+  item: SpotifyTrack | SpotifyEpisode | null;
 }
 
 export interface SavedTrack {

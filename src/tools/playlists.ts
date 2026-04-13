@@ -77,13 +77,15 @@ export function registerPlaylistTools(server: McpServer, spotify: SpotifyClient)
           },
         );
 
-        const lines = result.items.map((item, i) => {
-          const track = item.track;
-          if ("album" in track) {
-            return formatTrack(track, (offset ?? 0) + i);
-          }
-          return `${(offset ?? 0) + i + 1}. ${formatEpisode(track)}`;
-        });
+        const lines = result.items
+          .filter((item) => item.item !== null)
+          .map((item, i) => {
+            const content = item.item!;
+            if ("album" in content) {
+              return formatTrack(content, (offset ?? 0) + i);
+            }
+            return `${(offset ?? 0) + i + 1}. ${formatEpisode(content)}`;
+          });
         lines.push(formatPagination(result.total, result.limit, result.offset));
 
         return textContent(lines.join("\n"));
