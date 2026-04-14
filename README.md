@@ -49,8 +49,7 @@ npm run build
 
 ### 3. Configure Your MCP Client
 
-#### Codex (recommended in this repo)
-
+#### Codex
 This repo includes:
 
 - A project-local Codex MCP config template at `.codex/config.example.toml`
