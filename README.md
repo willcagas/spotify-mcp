@@ -93,31 +93,6 @@ Add to your `claude_desktop_config.json`:
 }
 ```
 
-#### Quad Code
-
-If Quad Code supports MCP stdio config using `command`/`args`/`env`, use:
-
-```json
-{
-  "mcpServers": {
-    "spotify": {
-      "command": "node",
-      "args": ["/path/to/spotify-mcp/dist/index.js"],
-      "env": {
-        "SPOTIFY_CLIENT_ID": "your_client_id_here",
-        "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:8888/callback"
-      }
-    }
-  }
-}
-```
-
-If Quad Code supports launching via a shell script, you can also point it to:
-
-```text
-/path/to/spotify-mcp/scripts/run-codex-mcp.sh
-```
-
 ### 4. Authenticate
 
 On first use, the server will open your browser to authorize with Spotify. A temporary local server on `http://127.0.0.1:{port}/callback` handles the OAuth redirect. Tokens are stored at `~/.spotify-mcp/tokens.json`.
