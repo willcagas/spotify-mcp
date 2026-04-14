@@ -49,7 +49,7 @@ export function registerPlayerTools(server: McpServer, spotify: SpotifyClient): 
             lines.push(`**Album:** ${item.album.name}`);
           } else {
             lines.push(`**Episode:** ${item.name}`);
-            lines.push(`**Show:** ${item.show.name}`);
+            lines.push(`**Show:** ${item.show?.name ?? "Unknown"}`);
           }
           lines.push(`**URI:** \`${item.uri}\``);
         }
@@ -117,7 +117,7 @@ export function registerPlayerTools(server: McpServer, spotify: SpotifyClient): 
         } else {
           return textContent(
             `**Now Playing:** ${item.name}\n` +
-            `**Show:** ${item.show.name}\n` +
+            `**Show:** ${item.show?.name ?? "Unknown"}\n` +
             `**Progress:** ${state.progress_ms !== null ? formatDuration(state.progress_ms) : "0:00"} / ${formatDuration(item.duration_ms)}\n` +
             `**URI:** \`${item.uri}\``
           );

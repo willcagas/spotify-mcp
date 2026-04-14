@@ -54,7 +54,8 @@ export function formatArtist(artist: SpotifyArtist): string {
 export function formatPlaylist(playlist: SpotifyPlaylist): string {
   const owner = playlist.owner.display_name ?? playlist.owner.id;
   const visibility = playlist.public ? "Public" : "Private";
-  return `**${playlist.name}** by ${owner} (${playlist.tracks.total} tracks, ${visibility}) \`${playlist.uri}\``;
+  const trackCount = playlist.tracks?.total ?? 0;
+  return `**${playlist.name}** by ${owner} (${trackCount} tracks, ${visibility}) \`${playlist.uri}\``;
 }
 
 export function formatDevice(device: SpotifyDevice): string {
@@ -65,11 +66,12 @@ export function formatDevice(device: SpotifyDevice): string {
 
 export function formatEpisode(episode: SpotifyEpisode): string {
   const duration = formatDuration(episode.duration_ms);
-  return `**${episode.name}** - ${episode.show.name} (${episode.release_date}, ${duration}) \`${episode.uri}\``;
+  const showName = episode.show?.name ? ` - ${episode.show.name}` : "";
+  return `**${episode.name}**${showName} (${episode.release_date}, ${duration}) \`${episode.uri}\``;
 }
 
 export function formatShow(show: SpotifyShow): string {
-  return `**${show.name}** by ${show.publisher} (${show.total_episodes} episodes) \`${show.uri}\``;
+  return `**${show.name}** by ${show.publisher ?? "Unknown"} (${show.total_episodes} episodes) \`${show.uri}\``;
 }
 
 export function formatAudiobook(audiobook: SpotifyAudiobook): string {

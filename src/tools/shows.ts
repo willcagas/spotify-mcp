@@ -23,7 +23,7 @@ export function registerShowTools(server: McpServer, spotify: SpotifyClient): vo
 
         return textContent(
           `# ${show.name}\n\n` +
-          `**Publisher:** ${show.publisher}\n` +
+          `**Publisher:** ${show.publisher ?? "Unknown"}\n` +
           `**Episodes:** ${show.total_episodes}\n` +
           `**Languages:** ${show.languages.join(", ")}\n` +
           `**Media Type:** ${show.media_type}\n` +
@@ -56,9 +56,11 @@ export function registerShowTools(server: McpServer, spotify: SpotifyClient): vo
           },
         );
 
-        const lines = result.items.map((ep, i) => {
-          return `${(offset ?? 0) + i + 1}. **${ep.name}** (${ep.release_date}, ${formatDuration(ep.duration_ms)}) \`${ep.uri}\``;
-        });
+        const lines = result.items
+          .filter((ep): ep is SpotifyEpisode => ep !== null)
+          .map((ep, i) => {
+            return `${(offset ?? 0) + i + 1}. **${ep.name}** (${ep.release_date}, ${formatDuration(ep.duration_ms)}) \`${ep.uri}\``;
+          });
         lines.push(formatPagination(result.total, result.limit, result.offset));
 
         return textContent(lines.join("\n"));
@@ -84,7 +86,7 @@ export function registerShowTools(server: McpServer, spotify: SpotifyClient): vo
 
         return textContent(
           `# ${ep.name}\n\n` +
-          `**Show:** ${ep.show.name}\n` +
+          `**Show:** ${ep.show?.name ?? "Unknown"}\n` +
           `**Release:** ${ep.release_date}\n` +
           `**Duration:** ${formatDuration(ep.duration_ms)}\n` +
           `**Language:** ${ep.language}\n` +

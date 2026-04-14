@@ -62,7 +62,7 @@ export interface SpotifyShow {
   name: string;
   uri: string;
   description: string;
-  publisher: string;
+  publisher?: string;
   total_episodes: number;
   images: SpotifyImage[];
   languages: string[];
@@ -78,7 +78,7 @@ export interface SpotifyEpisode {
   description: string;
   duration_ms: number;
   release_date: string;
-  show: SpotifyShow;
+  show: SpotifyShow | null;
   images: SpotifyImage[];
   language: string;
   external_urls: SpotifyExternalUrls;
@@ -120,7 +120,7 @@ export interface SpotifyPlaylist {
   public: boolean | null;
   collaborative: boolean;
   owner: SpotifyUser;
-  tracks: { total: number };
+  tracks?: { total: number };
   images: SpotifyImage[];
   snapshot_id: string;
   external_urls: SpotifyExternalUrls;

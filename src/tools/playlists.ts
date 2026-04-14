@@ -43,7 +43,7 @@ export function registerPlaylistTools(server: McpServer, spotify: SpotifyClient)
           `# ${pl.name}\n\n` +
           (pl.description ? `${pl.description}\n\n` : "") +
           `**Owner:** ${owner}\n` +
-          `**Tracks:** ${pl.tracks.total}\n` +
+          `**Tracks:** ${pl.tracks?.total ?? "Unknown"}\n` +
           `**Public:** ${pl.public === null ? "Unknown" : pl.public ? "Yes" : "No"}\n` +
           `**Collaborative:** ${pl.collaborative ? "Yes" : "No"}\n` +
           `**Snapshot:** \`${pl.snapshot_id}\`\n` +
@@ -181,7 +181,7 @@ export function registerPlaylistTools(server: McpServer, spotify: SpotifyClient)
       try {
         await spotify.delete(`/playlists/${id}/items`, {
           data: {
-            tracks: uris.map((uri) => ({ uri })),
+            items: uris.map((uri) => ({ uri })),
             ...(snapshot_id && { snapshot_id }),
           },
         });

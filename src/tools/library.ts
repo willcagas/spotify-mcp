@@ -30,6 +30,27 @@ import {
 } from "../utils/formatting.js";
 import { formatToolError } from "../utils/errors.js";
 
+const TYPE_ENDPOINTS: Record<string, string> = {
+  track: "/me/tracks",
+  album: "/me/albums",
+  show: "/me/shows",
+  episode: "/me/episodes",
+  audiobook: "/me/audiobooks",
+  playlist: "/me/playlists",
+};
+
+function groupUrisByType(uris: string[]): Record<string, string[]> {
+  const groups: Record<string, string[]> = {};
+  for (const uri of uris) {
+    const parts = uri.split(":");
+    const type = parts[1];
+    const id = parts[2];
+    if (!groups[type]) groups[type] = [];
+    groups[type].push(id);
+  }
+  return groups;
+}
+
 export function registerLibraryTools(server: McpServer, spotify: SpotifyClient): void {
   server.registerTool(
     "spotify_add_to_library",
@@ -44,7 +65,7 @@ export function registerLibraryTools(server: McpServer, spotify: SpotifyClient):
     },
     async ({ uris }) => {
       try {
-        await spotify.put("/me/library", { uris });
+        await spotify.put("/me/library", undefined, { params: { uris: uris.join(",") } });
         return textContent(`Saved ${uris.length} item(s) to library.`);
       } catch (error) {
         return formatToolError(error);
@@ -64,7 +85,7 @@ export function registerLibraryTools(server: McpServer, spotify: SpotifyClient):
     },
     async ({ uris }) => {
       try {
-        await spotify.delete("/me/library", { data: { uris } });
+        await spotify.delete("/me/library", { params: { uris: uris.join(",") } });
         return textContent(`Removed ${uris.length} item(s) from library.`);
       } catch (error) {
         return formatToolError(error);
