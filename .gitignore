@@ -3,5 +3,9 @@ dist/
 .env
 *.tsbuildinfo
 
+# Local MCP/client config
+.codex/config.toml
+.claude/settings.local.json
+
 # Token storage
 tokens.json

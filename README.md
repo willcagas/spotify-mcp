@@ -15,6 +15,12 @@ A comprehensive Spotify MCP (Model Context Protocol) server with **54 tools** co
 - **Recommendations** (2 tools) — Seed-based recommendations with tunable attributes *(deprecated for new apps)*
 - **Audio Analysis** (2 tools) — Audio features and detailed analysis *(deprecated for new apps)*
 
+## Supported Clients
+
+- **Codex** (project-local MCP config template via `.codex/config.example.toml`)
+- **Claude Desktop**
+- **Quad Code** (or any MCP client that supports stdio MCP servers)
+
 ## Prerequisites
 
 - **Node.js** >= 18
@@ -41,7 +47,36 @@ npm install
 npm run build
 ```
 
-### 3. Configure Claude Desktop
+### 3. Configure Your MCP Client
+
+#### Codex (recommended in this repo)
+
+This repo includes:
+
+- A project-local Codex MCP config template at `.codex/config.example.toml`
+- A launcher script at `scripts/run-codex-mcp.sh`
+
+1. Create `.env` in the repo root:
+
+```bash
+SPOTIFY_CLIENT_ID=your_client_id_here
+SPOTIFY_REDIRECT_URI=http://127.0.0.1:8888/callback
+```
+
+2. Create your local Codex config from the template:
+
+```bash
+cp .codex/config.example.toml .codex/config.toml
+```
+
+3. Verify Codex sees the server:
+
+```bash
+codex mcp list
+codex mcp get spotify
+```
+
+#### Claude Desktop
 
 Add to your `claude_desktop_config.json`:
 
@@ -58,6 +93,31 @@ Add to your `claude_desktop_config.json`:
     }
   }
 }
+```
+
+#### Quad Code
+
+If Quad Code supports MCP stdio config using `command`/`args`/`env`, use:
+
+```json
+{
+  "mcpServers": {
+    "spotify": {
+      "command": "node",
+      "args": ["/path/to/spotify-mcp/dist/index.js"],
+      "env": {
+        "SPOTIFY_CLIENT_ID": "your_client_id_here",
+        "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:8888/callback"
+      }
+    }
+  }
+}
+```
+
+If Quad Code supports launching via a shell script, you can also point it to:
+
+```text
+/path/to/spotify-mcp/scripts/run-codex-mcp.sh
 ```
 
 ### 4. Authenticate
