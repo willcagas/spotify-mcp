@@ -19,7 +19,6 @@ A comprehensive Spotify MCP (Model Context Protocol) server with **54 tools** co
 
 - **Codex** (project-local MCP config template via `.codex/config.example.toml`)
 - **Claude Desktop**
-- **Quad Code** (or any MCP client that supports stdio MCP servers)
 
 ## Prerequisites
 
